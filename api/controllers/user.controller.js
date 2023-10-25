@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-// import  errorHandler  from "../utils/error";
+import  {errorHandler}  from "../utils/error.js";
 import  bcryptjs  from "bcryptjs";
 export const test = (req, res) => {
   res.json({
@@ -29,3 +29,19 @@ export const updateUser = async(req, res, next) => {
     next(err);
   }
 };
+export const deleteUser = async (req,res,next) =>{
+    if(req.user.id !== req.params.id){
+        return next(errorHandler(401,'you can only update your own id '))
+    }
+    try{
+        await User.findByIdAndDelete(req.params.id)
+        res.clearCookie('access_token');
+        res.status(200).json({
+            message:"user is succesfully deleted"
+        })
+    }
+    catch(err){
+        next(err);
+    }
+    
+}

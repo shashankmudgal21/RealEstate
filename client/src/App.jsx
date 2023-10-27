@@ -6,6 +6,7 @@ import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp.'
 import Header from './Component/Header'
 import Profile from './pages/Profile'
+import CreateListing from './pages/CreateListing'
 import PrivateRouter from './Component/PrivateRouter'
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route exact path = '/about' element = {<About />}></Route>
         <Route element = {<PrivateRouter/>}>
         <Route exact path = '/profile' element = {<Profile />}></Route>
+        <Route exact path = '/create-listing' element = {< CreateListing/>}></Route>
         </Route>
         
       </Routes>

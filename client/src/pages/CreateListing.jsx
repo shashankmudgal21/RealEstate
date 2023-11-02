@@ -58,6 +58,7 @@ export default function CreateListing() {
       setImageUploadError("You can upload 6 image per listing ");
     }
   };
+
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);

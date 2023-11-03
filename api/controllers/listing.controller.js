@@ -12,7 +12,7 @@ export const createListing = async(req, res, next) => {
 export const deleteListing = async(req,res,next) =>{
   const listing = await Listing.findById(req.params.id)
   if(!listing){
-    next(errorHandler(404,'listing not found'))
+    return next(errorHandler(404,'listing not found'))
   }
   if(req.user.id !== listing.useRef){
     return next(errorHandler(401,'You can delete only your own listing'));
@@ -20,6 +20,26 @@ export const deleteListing = async(req,res,next) =>{
   try{
     await Listing.findByIdAndDelete(req.params.id)
     res.status(200).json('Listing deleted succesfully ')
+  }
+  catch(err){
+    next(err);
+  }
+}
+export const updateListing = async (req,res,next) =>{
+  const listing = await Listing.findById(req.params.id)
+  if(!listing){
+    return next(errorHandler(404,'listing not found'))
+  }
+  if(req.user.id !== listing.useRef){
+    return next(errorHandler(401,'You can delete only your own listing'));
+  }
+  try{
+    const updatedListing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {new:true},
+    )
+    res.status(200).json(updatedListing)
   }
   catch(err){
     next(err);

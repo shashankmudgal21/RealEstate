@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Await, useNavigate } from "react-router-dom";
 import ListingItem from "../Component/ListingItem";
 export default function Search() {
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ export default function Search() {
   });
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
+  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -40,7 +41,7 @@ export default function Search() {
         furnished: furnishedFromUrl === "true" ? true : false,
         type: typeFromUrl || "all",
         offer: offerFromUrl === "true" ? true : false,
-        order: orderFromUrl || 'desc',
+        order: orderFromUrl || "desc",
         sort: sortFromUrl || "created_At",
       });
     }
@@ -50,9 +51,13 @@ export default function Search() {
       setLoading(true);
       const res = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await res.json();
+      if (data.length > 8) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
       setLoading(false);
       setListings(data);
-      
     };
     fetchListing();
   }, [location.search]);
@@ -99,9 +104,22 @@ export default function Search() {
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
+  const onShowMoreClick = async () => {
+    const numberOfListing = listings.length;
+    const startIndex = numberOfListing;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if (data.length < 8) {
+      setShowMore(false);
+    }
+    setListings([...listings, ...data]);
+  };
   return (
-    <div className="flex flex-col md:flex-row">
-      <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
+    <div className="flex flex-col md:flex-row ">
+      <div className="p-7 border-b-2  md:border-r-2 md:min-h-screen">
         <form onSubmit={handleSubmit} action="" className="flex flex-col gap-6">
           <div className="flex items-center gap-2">
             <label className="whitespace-nowrap font-semibold">
@@ -110,7 +128,6 @@ export default function Search() {
             <input
               className="border p-3 rounded-lg w-full"
               type="text"
-              name=""
               id="searchTerm"
               placeholder="Search.."
               value={sidebardata.searchTerm}
@@ -210,7 +227,7 @@ export default function Search() {
         </form>
       </div>
       <div>
-        <h1 className="text-3xl border-b text-slate-700 font-semibold mt-5">
+        <h1 className="text-3xl  border-b text-slate-700 font-semibold mt-3">
           Listing results:
         </h1>
         <div className="p-7 flex flex-wrap gap-4">
@@ -224,12 +241,18 @@ export default function Search() {
           )}
 
           {!loading &&
-            listings && 
+            listings &&
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
-            )
-            )
-          }
+            ))}
+          {showMore && (
+            <button
+              className="text-green-700 hover:underline w-full text-center"
+              onClick={onShowMoreClick}
+            >
+              Show more
+            </button>
+          )}
         </div>
       </div>
     </div>

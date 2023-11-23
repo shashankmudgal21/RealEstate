@@ -31,6 +31,6 @@ app.use((err,req,res,next)=>{
 })
 
 app.listen(4000, () => {
-  console.log("Server is starting at 4000 port");
+  console.log("Server is starting on  4000 port");
 });
 

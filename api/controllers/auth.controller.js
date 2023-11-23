@@ -7,7 +7,7 @@ export const signup = async (req, res, next) => {
   const hashPassword = bcryptjs.hashSync(password, 10);
   const newUser = new User({ username, email, password: hashPassword });
   try {
-    await newUser.save();
+    await newUer.save();
     res.status(201).json({
       message: "User creates succesfully",
     });
@@ -49,7 +49,7 @@ export const google = async (req, res, next) => {
       const generatedPassword = Math.random().toString(36).slice(-8)+Math.random().toString(36).slice(-8);
       const hashedPassword = bcryptjs.hashSync(generatedPassword)
       const newUser = new User(
-        {username:req.body.name.split(' ').join("").toLowerCase()+Math.random().toString(36).slice(-4),
+        {usrname:req.body.name.split(' ').join("").toLowerCase()+Math.random().toString(36).slice(-4),
         email:req.body.email,password:hashedPassword,avatar:req.body.photo })
 
       newUser.save();
